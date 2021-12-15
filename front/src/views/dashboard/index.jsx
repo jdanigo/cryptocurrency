@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { Container, Row, Col, Table, Alert } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
 import { parseFinancialNumber, UporDown } from "../../utils";
 import { Link, Outlet } from "react-router-dom";
+import {API} from '../../services/index';
 function Dashboard() {
   const [search, setSearch] = useState("");
   const [crypto, setCrypto] = useState([]);
@@ -11,28 +12,31 @@ function Dashboard() {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/tickers/`)
+    
+      API.fetchDataDashboard()
       .then((res) => {
+        console.log("mostrando response", res);
         setCrypto(res.data.data);
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
         setFailed(true);
-        console.log("Se ha presentado un error");
+        console.log("Se ha presentado un error", error);
       });
+    
+    
   }, []);
 
   return (
     <>
-    <Outlet />
-      <Container fluid role="container-dashboard">
+      <Outlet />
+      <Container fluid>
         {/* If Loading show the skeleton */}
         {loading ? (
-          <>
+          <div data-testid="loading">
             <Skeleton count={5} />
-          </>
+          </div>
         ) : (
           <>
             {failed ? (
@@ -40,7 +44,7 @@ function Dashboard() {
                 <Alert variant={"danger"}>An Error has occured</Alert>
               </>
             ) : (
-              <>
+              <div data-testid="resolved">
                 <Row>
                   <Col>
                     <input
@@ -78,48 +82,45 @@ function Dashboard() {
                           })
                           .map((val, index) => {
                             return (
-                              <>
-                                <tr key={index}>
-                                  <td>{val.id}</td>
-                                  <td className="symbol">
-                                    <Link to={"/detail/" + val.id}>
-                                      {val.symbol}
-                                    </Link>
-                                  </td>
-                                  <td>{val.name}</td>
-                                  <td>{val.rank}</td>
-                                  <td>
-                                    &#36;{parseFinancialNumber(val.price_usd)}
-                                  </td>
-                                  <td>{val.price_btc}</td>
-                                  <td>
-                                    <td>{UporDown(val.percent_change_1h)}</td>
-                                  </td>
-                                  <td>{UporDown(val.percent_change_24h)}</td>
-                                  <td>
-                                    <td>{UporDown(val.percent_change_7d)}</td>
-                                  </td>
-                                  <td>
-                                    &#36;
-                                    {parseFinancialNumber(val.market_cap_usd)}
-                                  </td>
-                                  <td>
-                                    &#36;{parseFinancialNumber(val.volume24)}
-                                  </td>
-                                </tr>
-                              </>
+                            <tr key={index}>
+                                <td>{val.id}</td>
+                                <td className="symbol">
+                                  <Link to={"/detail/" + val.id}>
+                                    {val.symbol}
+                                  </Link>
+                                </td>
+                                <td>{val.name}</td>
+                                <td>{val.rank}</td>
+                                <td>
+                                  &#36;{parseFinancialNumber(val.price_usd)}
+                                </td>
+                                <td>{val.price_btc}</td>
+                                <td>
+                                  <td>{UporDown(val.percent_change_1h)}</td>
+                                </td>
+                                <td>{UporDown(val.percent_change_24h)}</td>
+                                <td>
+                                  <td>{UporDown(val.percent_change_7d)}</td>
+                                </td>
+                                <td>
+                                  &#36;
+                                  {parseFinancialNumber(val.market_cap_usd)}
+                                </td>
+                                <td>
+                                  &#36;{parseFinancialNumber(val.volume24)}
+                                </td>
+                            </tr>
                             );
                           })}
                       </tbody>
                     </Table>
                   </Col>
                 </Row>
-              </>
+              </div>
             )}
           </>
         )}
       </Container>
-      
     </>
   );
 }
