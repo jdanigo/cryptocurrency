@@ -9,8 +9,7 @@ import {
 import { Link , Outlet} from "react-router-dom";
 function DefaultLayout({ children }) {
   return (
-    <>
-
+    <div data-testid="layout">
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand>Cripto Currency</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -28,7 +27,7 @@ function DefaultLayout({ children }) {
         </Row>
       </Container>
       <Outlet />      
-    </>
+    </div>
   );
 }
 

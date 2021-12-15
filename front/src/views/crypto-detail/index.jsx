@@ -50,7 +50,7 @@ function CryptoDetail() {
             <Container fluid>
             <Row className="my-3">
               <Col lg={12}>
-                <div role="title-detail" className="text-center">
+                <div className="text-center">
                   <h1>
                     {crypto.name} ({crypto.symbol}){" "}
                   </h1>
